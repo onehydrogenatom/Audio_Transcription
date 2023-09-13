@@ -1,0 +1,28 @@
+# Using audio.whisper to transcribe audio to text in R
+library("remotes")
+library("av")
+library("audio.whisper")
+
+# Set the OpenAI API key, IF INTERESTED
+Sys.setenv(OPENAI_API_KEY = "ENTER-YOUR-GPT-KEY-HERE")
+
+# Load the Whisper model
+model <- whisper("small")
+
+# Set the input file path as a character string
+input <- "PATH-TO-YOUR-AUDIO"
+
+# Set the output file path as a character string
+output <- "output.wav"
+
+# Convert the audio to WAV format with a sample rate of 16000
+av_audio_convert(input, output, format = "wav", sample_rate = 16000)
+
+# Predict text using the model object
+trans <- predict(model,
+                 newdata = output,  # Use the output WAV file as input
+                 language = "en",
+                 n_threads = 2)
+
+# Add a text file for output
+write.table(trans$data$text, file = "YOUR-TEXT-FILE", sep = "\t", row.names = FALSE)
